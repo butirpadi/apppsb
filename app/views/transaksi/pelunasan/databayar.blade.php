@@ -30,7 +30,13 @@
             </td>
             <td>{{ $dt->biaya->nama }}</td>
             <td style="text-align: right;">{{ number_format($dt->dibayar,0,',','.') }}</td>
-            <td></td>
+            <td>
+                @if($dt->tgl == $tgl)
+                @else
+                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/{{$dt->id}}" >Edit</a>
+                @endif
+                
+            </td>
         </tr>
         <?php $tgl = $dt->tgl; ?>
         @endforeach

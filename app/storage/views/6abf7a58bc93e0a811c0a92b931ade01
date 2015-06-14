@@ -1,0 +1,69 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nota</th>
+            <th>Tanggal</th>
+            <th>Biaya</th>
+            <th>Dibayar</th>
+            <th class="td-actions"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $rownum = 1; ?>
+        <?php $tgl = null; ?>
+        <?php foreach($calon->registrasi->pembayarans as $dt): ?>
+        <tr>
+            <td><?php echo $rownum++; ?></td>
+            <td>
+                <?php if($dt->tgl == $tgl): ?>
+                <?php else: ?>
+                <a class="btn btn-mini btn-cetak-nota" tgl="<?php echo date('d-m-Y',strtotime($dt->tgl)); ?>" ><i class="icon-copy"></i></a>
+                <?php endif; ?>
+            </td>
+            <td style="text-align: center;">
+                <?php if($dt->tgl == $tgl): ?>
+                -"-
+                <?php else: ?>
+                <?php echo date('d-m-Y',strtotime($dt->tgl)); ?>
+                <?php endif; ?>
+            </td>
+            <td><?php echo $dt->biaya->nama; ?></td>
+            <td style="text-align: right;"><?php echo number_format($dt->dibayar,0,',','.'); ?></td>
+            <td>
+                <?php if($dt->tgl == $tgl): ?>
+                <?php else: ?>
+                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/<?php echo $dt->id; ?>" >Edit</a>
+                <?php endif; ?>
+                
+            </td>
+        </tr>
+        <?php $tgl = $dt->tgl; ?>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery('.btn-cetak-nota').click(function() {
+            if (confirm('Anda akan mencetak Nota untuk data pembayaran ini?')) {
+                var tgl = jQuery('.btn-cetak-nota').attr('tgl');
+                var regnum = jQuery('input[name=regid]').val();
+                var getnotaUrl = "<?php echo URL::to('transaksi/pelunasan/getnotapilihan'); ?>" + "/" + regnum + "/" + tgl;
+                //set applet
+                var appletTag = '<applet id="qz" archive="<?php echo URL::to('jar/qz-print.jar'); ?> " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="<?php echo URL::to('jar/qz-print_jnlp.jnlp'); ?>"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
+                jQuery('#applet-tag').html(appletTag);
+                //print nota
+                jQuery.get(getnotaUrl, null, function(data) {
+                    QZPrint.findPrinter("<?php echo $appset->printeraddr; ?>");
+                    QZPrint.append(data);
+                    QZPrint.print();
+                    alert('Cetak nota sedang diproses.');
+                });
+
+                //location.reload();   
+            }
+        })
+    });
+</script>

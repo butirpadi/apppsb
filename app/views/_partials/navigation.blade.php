@@ -37,6 +37,7 @@
                         <li><a href="{{ URL::route('transaksi.distribusi.index') }}">Distribusi Siswa</a></li>
                     </ul>
                 </li>
+                <li class="{{ Request::is('pengeluaran*') ? 'active' : '' }}"><a href="{{ URL::route('pengeluaran.index') }}"><i class="icon-upload-alt"></i><span>PENGELUARAN</span> </a> </li>
                 <li class="{{ Request::is('rekap*') ? 'active' : '' }}"><a href="{{ URL::route('rekap.rekap.index') }}"><i class="icon-list-alt"></i><span>REKAP</span> </a> </li>
                 <li ><a class="btn-logout" href="{{ URL::to('login/logout') }}"><i class="icon-off" style="color: #DB613B;"></i><span style="color: #DB613B;">KELUAR</span> </a> </li>
                 <li><a href="charts.html"><span></span> </a> </li>

@@ -25,6 +25,9 @@ Route::resource('login','App\Controllers\LoginController');
 Route::group(array('before'=>'auth'), function() {   
     Route::get('home/index','App\Controllers\HomeController@index');
     Route::resource('home','App\Controllers\HomeController');
+    
+    Route::post('pengeluaran/addnew','App\Controllers\PengeluaranController@addnew');
+    Route::resource('pengeluaran','App\Controllers\PengeluaranController');
 });
 
 Route::group(array('before'=>'auth','prefix' => 'master'), function() {
@@ -78,6 +81,11 @@ Route::group(array('before'=>'auth','prefix' => 'transaksi'), function() {
     Route::get('pelunasan/getstatusbayar/{regid}', 'App\Controllers\Transaksi\PelunasanController@getstatusbayar');
     Route::get('pelunasan/getdatapembayaran/{regid}', 'App\Controllers\Transaksi\PelunasanController@getdatapembayaran');
     Route::get('pelunasan/getcalonbyregid/{regid}', 'App\Controllers\Transaksi\PelunasanController@getcalonbyregid');
+    Route::get('pelunasan/editbayar/{id}', 'App\Controllers\Transaksi\PelunasanController@editbayar');
+    Route::get('pelunasan/editbayar/{id}/{regid}/{tgl}', 'App\Controllers\Transaksi\PelunasanController@editbayar');
+    Route::post('pelunasan/batalkantransaksi', 'App\Controllers\Transaksi\PelunasanController@batalkantransaksi');
+    Route::post('pelunasan/showpembayaran', 'App\Controllers\Transaksi\PelunasanController@showpembayaran');
+    Route::post('pelunasan/deleteitembayar', 'App\Controllers\Transaksi\PelunasanController@deleteitembayar');
     Route::resource('pelunasan', 'App\Controllers\Transaksi\PelunasanController');
     
     Route::post('distribusi/canceldistribute', 'App\Controllers\Transaksi\DistribusiController@canceldistribute');

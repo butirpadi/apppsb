@@ -48,7 +48,8 @@ class RekapController extends \BaseController {
         $pembayaran = \App\Models\Pembayaran::whereBetween('tgl',array(date('Y-m-d',strtotime($awal)), date('Y-m-d',strtotime($akhir))))->select('psbregistrasi_id','tgl')->distinct()->get();
         $pembayarans = \App\Models\Pembayaran::whereBetween('tgl',array(date('Y-m-d',strtotime($awal)), date('Y-m-d',strtotime($akhir))))->get();
         
-        $pdf = new \fpdf\Pdfepsb();
+        $pdf = new \Pdfepsb();
+//        $pdf = new \fpdf\Pdfepsb();
         //set periode
         $pdf->setAwal($awal);
         $pdf->setAkhir($akhir);

@@ -15,60 +15,60 @@
     <tbody>
         <?php $rownum = 1; ?>
         <?php $belumbayar = 0; ?>
-        @foreach($tapel->biayas()->where('gelombang',$calon->gelombang)->get() as $dt)
+        <?php foreach($tapel->biayas()->where('gelombang',$calon->gelombang)->get() as $dt): ?>
         <tr>
-            <td>{{ $rownum++ }}</td>
-            <td>{{ $dt->nama }}</td>
+            <td><?php echo $rownum++; ?></td>
+            <td><?php echo $dt->nama; ?></td>
             <td style="text-align: right;">
                 <?php $harusbayar = 0; ?>
-                @if($calon->jenis_kelamin == 'L')
+                <?php if($calon->jenis_kelamin == 'L'): ?>
                 <?php $harusbayar = $dt->pivot->p_nilai; ?>
-                @else
+                <?php else: ?>
                 <?php $harusbayar = $dt->pivot->w_nilai; ?>
-                @endif
-                {{ number_format($harusbayar,0,',','.') }}
+                <?php endif; ?>
+                <?php echo number_format($harusbayar,0,',','.'); ?>
             </td>
             <td style="text-align: right;">
                 <?php $pot = 0; ?>
-                @foreach($calon->registrasi->pembayarans as $dt1)
-                @if($dt1->psbbiaya_id == $dt->id)
+                <?php foreach($calon->registrasi->pembayarans as $dt1): ?>
+                <?php if($dt1->psbbiaya_id == $dt->id): ?>
                 <?php $pot = $dt1->potongan; ?>
-                @endif
-                @endforeach
-                {{ number_format($pot,0,',','.') }}
+                <?php endif; ?>
+                <?php endforeach; ?>
+                <?php echo number_format($pot,0,',','.'); ?>
             </td>
             <td style="text-align: right;">
                 <?php $dibayar = 0; ?>
-                @foreach($calon->registrasi->pembayarans as $dt1)
-                @if($dt1->psbbiaya_id == $dt->id)
+                <?php foreach($calon->registrasi->pembayarans as $dt1): ?>
+                <?php if($dt1->psbbiaya_id == $dt->id): ?>
                 <?php $dibayar+=$dt1->dibayar; ?>
-                @endif
-                @endforeach
-                {{ number_format($dibayar,0,',','.') }}
+                <?php endif; ?>
+                <?php endforeach; ?>
+                <?php echo number_format($dibayar,0,',','.'); ?>
             </td>
             <td style="text-align: right;">
-                {{ number_format($harusbayar - $pot - $dibayar,0,',','.') }}
+                <?php echo number_format($harusbayar - $pot - $dibayar,0,',','.'); ?>
             </td>
             <td style="text-align: center;">
-                @if(($harusbayar-$pot) == $dibayar)
+                <?php if(($harusbayar-$pot) == $dibayar): ?>
                 <i class="icon-ok" style="color: #5e8510;" ></i>
-                @else
+                <?php else: ?>
                 <i class="icon-minus" style="color: red;"></i>
                 <?php $semualunas = false; ?>
                 <?php $belumbayar += $harusbayar-$pot; ?>
-                @endif
+                <?php endif; ?>
             </td>
             <td></td>
         </tr>                        
-        @endforeach
+        <?php endforeach; ?>
     </tbody>
 </table>
 
-@if(!$semualunas)
+<?php if(!$semualunas): ?>
 <div class="pull-left label label-important" >
-    <h4 >TOTAL TAGIHAN : Rp. {{number_format($belumbayar,0,',','.')}}</h4>
+    <h4 >TOTAL TAGIHAN : Rp. <?php echo number_format($belumbayar,0,',','.'); ?></h4>
 </div>
 <div class="pull-right" >
     <a class="btn btn-warning btn-lunasi">LUNASI SEKARANG</a>
 </div>
-@endif
+<?php endif; ?>

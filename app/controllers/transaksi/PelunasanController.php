@@ -15,7 +15,7 @@ class PelunasanController extends \BaseController {
             $selectTapel[$dt->id] = $dt->nama;
         }
         $appset = \App\Models\Appsetting::first();
-        return \View::make('transaksi.pelunasan.index', array('selectTapel' => $selectTapel,'appset'=>$appset));
+        return \View::make('transaksi.pelunasan.index', array('selectTapel' => $selectTapel, 'appset' => $appset));
     }
 
     /**
@@ -34,8 +34,8 @@ class PelunasanController extends \BaseController {
     public function getdatapembayaran($regid) {
         $calon = \App\Models\Calonsiswa::where('regnum', $regid)->first();
         $appset = \App\Models\Appsetting::first();
-        
-        return \View::make('transaksi.pelunasan.databayar', array('calon' => $calon,'appset'=>$appset));
+
+        return \View::make('transaksi.pelunasan.databayar', array('calon' => $calon, 'appset' => $appset));
     }
 
 //    public function getstatusbayar($tapelid,$regid){
@@ -111,7 +111,7 @@ class PelunasanController extends \BaseController {
                     'harusbayar' => $databayar[$i]->harusbayar,
                     'dibayar' => $databayar[$i]->dibayar,
                     'potongan' => $databayar[$i]->potongan,
-                    'tgl' => date('Y-m-d',strtotime($datareg->tgl))
+                    'tgl' => date('Y-m-d', strtotime($datareg->tgl))
                 ));
                 echo 'insert data ke ' . ($i + 1) . '<br/>';
                 echo '........<br/>';
@@ -155,7 +155,7 @@ class PelunasanController extends \BaseController {
         $total = 0;
         $Data = $initialized;
         $Data .= $condensed1;
-        
+
         $Data .= $this->generate_space(($appset->charcount - strlen('TANDA BUKTI PEMBAYARAN PSB ' . $tahunajaran->nama)) / 2, "") . "TANDA BUKTI PEMBAYARAN PSB " . $tahunajaran->nama . "\n";
         //$Data .= $this->generate_space(($appset->charcount - strlen($tahunajaran->nama)) / 2, "") . $tahunajaran->nama . "\n";
         $Data .= $this->generate_space(($appset->charcount - strlen('SDI SABILIL HUDA')) / 2, "") . "SDI SABILIL HUDA\n";
@@ -194,13 +194,13 @@ class PelunasanController extends \BaseController {
         }
         return $Data;
     }
-    
-    public function getnotapilihan($regnum,$tgl){
-        $tglPembayaran = date('Y-m-d',strtotime($tgl));
-        $calon = \App\Models\Calonsiswa::where('regnum',$regnum)->first();
+
+    public function getnotapilihan($regnum, $tgl) {
+        $tglPembayaran = date('Y-m-d', strtotime($tgl));
+        $calon = \App\Models\Calonsiswa::where('regnum', $regnum)->first();
         $reg = $calon->registrasi;
-        $pembayaran = $reg->pembayarans()->where('tgl',$tglPembayaran)->get();
-        
+        $pembayaran = $reg->pembayarans()->where('tgl', $tglPembayaran)->get();
+
         $Data = "";
         $condensed = Chr(27) . Chr(33) . Chr(4);
         $bold1 = Chr(27) . Chr(69);
@@ -225,7 +225,7 @@ class PelunasanController extends \BaseController {
         $total = 0;
         $Data = $initialized;
         $Data .= $condensed1;
-        
+
         $Data .= $this->generate_space(($appset->charcount - strlen('TANDA BUKTI PEMBAYARAN PSB ' . $tahunajaran->nama)) / 2, "") . "TANDA BUKTI PEMBAYARAN PSB " . $tahunajaran->nama . "\n";
         //$Data .= $this->generate_space(($appset->charcount - strlen($tahunajaran->nama)) / 2, "") . $tahunajaran->nama . "\n";
         $Data .= $this->generate_space(($appset->charcount - strlen('SDI SABILIL HUDA')) / 2, "") . "SDI SABILIL HUDA\n";
@@ -237,7 +237,7 @@ class PelunasanController extends \BaseController {
         $Data .= "---+-----------+-------------+------------+-------------\n";
         //$Data .= $datacetakbaru;
         $rownum = 1;
-        foreach($pembayaran as $dt){
+        foreach ($pembayaran as $dt) {
             $isi_num = $this->generate_space($l_no, $rownum) . $rownum++;
             $biaya = \App\Models\Biaya::find($dt->psbbiaya_id);
             $isi_biaya = $biaya->nama . $this->generate_space($l_biaya, $biaya->nama);
@@ -248,7 +248,7 @@ class PelunasanController extends \BaseController {
             $jumlahitem++;
             $total += $dt->dibayar;
         }
-            
+
 //        for ($i = 0; $i < count($databayar); $i++) {
 //            $isi_num = $this->generate_space($l_no, $rownum) . $rownum++;
 //            $biaya = \App\Models\Biaya::find($databayar[$i]->psbbiaya_id);
@@ -276,7 +276,7 @@ class PelunasanController extends \BaseController {
         }
         return $Data;
     }
-    
+
     public function generate_space($space, $kata) {
         $res = "";
         for ($i = 0; $i < ($space - strlen($kata)); $i++) {
@@ -324,6 +324,80 @@ class PelunasanController extends \BaseController {
      */
     public function destroy($id) {
         //
+    }
+
+    /**
+     * Edit transaksi pembayaran
+     * @param type $id
+     * @return type
+     */
+    function editbayar($id, $regid = null, $tgl = null) {
+
+
+        if ($regid != null) {
+            $bayar = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $regid)->where('tgl', $tgl)->first();
+//            $bayar = \DB::table('psb_pembayaran')->find($id);
+            $calon = \DB::table('psb_calon_siswa')->where('id', \DB::table('psb_registrasi')->where('id', $bayar->psbregistrasi_id)->first()->psbcalonsiswa_id)->first();
+            $databayar = \DB::table('VIEW_PSB_PEMBAYARAN')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
+            $total = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->sum('dibayar');
+        } else {
+            $bayar = \DB::table('psb_pembayaran')->find($id);
+            $calon = \DB::table('psb_calon_siswa')->where('id', \DB::table('psb_registrasi')->where('id', $bayar->psbregistrasi_id)->first()->psbcalonsiswa_id)->first();
+            $databayar = \DB::table('VIEW_PSB_PEMBAYARAN')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
+            $total = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->sum('dibayar');
+        }
+
+        return \View::make('transaksi.pelunasan.editbayar', array(
+                    'databayar' => $databayar,
+                    'calon' => $calon,
+                    'bayar' => $bayar,
+                    'total' => $total
+        ));
+    }
+
+    /**
+     * Delete salah satu item pembayaran
+     */
+    function deleteitembayar() {
+        $data = \DB::table('psb_pembayaran')->find(\Input::get('psb_pembayaran_id'));
+        \DB::select("CALL SP_DELETE_PSB_PEMBAYARAN('" . \Input::get('psb_pembayaran_id') . "')");
+
+        return \Redirect::to('transaksi/pelunasan/editbayar/null/' . $data->psbregistrasi_id . '/' . $data->tgl);
+    }
+
+    function batalkantransaksi() {
+        $data = \DB::table('psb_pembayaran')->find(\Input::get('psb_pembayaran_id'));
+
+        $databayar = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $data->psbregistrasi_id)->where('tgl', $data->tgl)->get();
+
+        //delete item pembayaran
+        foreach ($databayar as $db) {
+            \DB::select("CALL SP_DELETE_PSB_PEMBAYARAN('" . $db->id . "')");
+        }
+
+        return \Redirect::to('transaksi/pelunasan');
+    }
+
+    function showpembayaran() {
+        $tapels = \App\Models\Tapel::orderBy('posisi')->get();
+        foreach ($tapels as $dt) {
+            $selectTapel[$dt->id] = $dt->nama;
+        }
+        $appset = \App\Models\Appsetting::first();
+
+
+        $calon = \App\Models\Calonsiswa::where('regnum', \Input::get('regid'))->first();
+        $tapel = \App\Models\Tapel::find($calon->tapelmasuk_id);
+
+        return \View::make('transaksi.pelunasan.show', array(
+                    'regid' => \Input::get('regid'),
+                    'nama' => \Input::get('nama'),
+                    'tgl' => \Input::get('tgl'),
+                    'selectTapel' => $selectTapel,
+                    'appset' => $appset,
+                    'tapel' => $tapel,
+                    'calon' => $calon
+        ));
     }
 
 }
