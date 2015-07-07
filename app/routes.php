@@ -93,7 +93,9 @@ Route::group(array('before'=>'auth','prefix' => 'transaksi'), function() {
     Route::post('pelunasan/batalkantransaksi', 'App\Controllers\Transaksi\PelunasanController@batalkantransaksi');
     Route::post('pelunasan/showpembayaran', 'App\Controllers\Transaksi\PelunasanController@showpembayaran');
     Route::post('pelunasan/deleteitembayar', 'App\Controllers\Transaksi\PelunasanController@deleteitembayar');
+    Route::get('pelunasan/testprint', 'App\Controllers\Transaksi\PelunasanController@testprint');
     Route::resource('pelunasan', 'App\Controllers\Transaksi\PelunasanController');
+    
     
     Route::post('distribusi/canceldistribute', 'App\Controllers\Transaksi\DistribusiController@canceldistribute');
     Route::post('distribusi/distribute', 'App\Controllers\Transaksi\DistribusiController@distribute');

@@ -399,5 +399,14 @@ class PelunasanController extends \BaseController {
                     'calon' => $calon
         ));
     }
+    
+    function testprint(){
+        $tapels = \App\Models\Tapel::orderBy('posisi')->get();
+        foreach ($tapels as $dt) {
+            $selectTapel[$dt->id] = $dt->nama;
+        }
+        $appset = \App\Models\Appsetting::first();
+        return \View::make('transaksi.pelunasan.testprint', array('selectTapel' => $selectTapel, 'appset' => $appset));
+    }
 
 }

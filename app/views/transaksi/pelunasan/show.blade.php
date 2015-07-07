@@ -284,7 +284,7 @@
     </div>
 </div>
 
-<div id="applet-tag"></div>
+<!--<div id="applet-tag"></div>-->
 
 <!-- Modal -->
 <div id="modal-search-calon" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

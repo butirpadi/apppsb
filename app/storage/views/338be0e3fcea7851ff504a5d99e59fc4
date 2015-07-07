@@ -12,34 +12,34 @@
     <tbody>
         <?php $rownum = 1; ?>
         <?php $tgl = null; ?>
-        @foreach($calon->registrasi->pembayarans as $dt)
+        <?php foreach($calon->registrasi->pembayarans as $dt): ?>
         <tr>
-            <td>{{ $rownum++ }}</td>
+            <td><?php echo $rownum++; ?></td>
             <td>
-                @if($dt->tgl == $tgl)
-                @else
-                <a class="btn btn-mini btn-cetak-nota" tgl="{{ date('d-m-Y',strtotime($dt->tgl)) }}" ><i class="icon-copy"></i></a>
-                @endif
+                <?php if($dt->tgl == $tgl): ?>
+                <?php else: ?>
+                <a class="btn btn-mini btn-cetak-nota" tgl="<?php echo date('d-m-Y',strtotime($dt->tgl)); ?>" ><i class="icon-copy"></i></a>
+                <?php endif; ?>
             </td>
             <td style="text-align: center;">
-                @if($dt->tgl == $tgl)
+                <?php if($dt->tgl == $tgl): ?>
                 -"-
-                @else
-                {{ date('d-m-Y',strtotime($dt->tgl)) }}
-                @endif
+                <?php else: ?>
+                <?php echo date('d-m-Y',strtotime($dt->tgl)); ?>
+                <?php endif; ?>
             </td>
-            <td>{{ $dt->biaya->nama }}</td>
-            <td style="text-align: right;">{{ number_format($dt->dibayar,0,',','.') }}</td>
+            <td><?php echo $dt->biaya->nama; ?></td>
+            <td style="text-align: right;"><?php echo number_format($dt->dibayar,0,',','.'); ?></td>
             <td>
-                @if($dt->tgl == $tgl)
-                @else
-                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/{{$dt->id}}" >Edit</a>
-                @endif
+                <?php if($dt->tgl == $tgl): ?>
+                <?php else: ?>
+                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/<?php echo $dt->id; ?>" >Edit</a>
+                <?php endif; ?>
 
             </td>
         </tr>
         <?php $tgl = $dt->tgl; ?>
-        @endforeach
+        <?php endforeach; ?>
     </tbody>
 </table>
 
@@ -50,20 +50,19 @@
             if (confirm('Anda akan mencetak Nota untuk data pembayaran ini?')) {
                 var tgl = jQuery('.btn-cetak-nota').attr('tgl');
                 var regnum = jQuery('input[name=regid]').val();
-                var getnotaUrl = "{{ URL::to('transaksi/pelunasan/getnotapilihan') }}" + "/" + regnum + "/" + tgl;
+                var getnotaUrl = "<?php echo URL::to('transaksi/pelunasan/getnotapilihan'); ?>" + "/" + regnum + "/" + tgl;
                 //set applet
-//                var appletTag = '<applet id="qz" archive="{{ URL::to('jar/qz-print.jar') }} " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="{{ URL::to('jar/qz-print_jnlp.jnlp') }}"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
+//                var appletTag = '<applet id="qz" archive="<?php echo URL::to('jar/qz-print.jar'); ?> " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="<?php echo URL::to('jar/qz-print_jnlp.jnlp'); ?>"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
 //                jQuery('#applet-tag').html(appletTag);
                 //print nota
                 jQuery.get(getnotaUrl, null, function (data) {
-//                    QZPrint.findPrinter("{{ $appset->printeraddr }}");
+//                    QZPrint.findPrinter("<?php echo $appset->printeraddr; ?>");
 //                    QZPrint.append(data);
 //                    QZPrint.print();
-
+                    
                     alert('Cetak nota sedang diproses.');
-                    var printer = "{{ $appset->printeraddr }}";
                     //Printing
-                    qz.findPrinter(printer);
+                    qz.findPrinter('EpsonLX-800');
                     // Automatically gets called when "qz.findPrinter()" is finished.
                     window['qzDoneFinding'] = function () {
                         var p = document.getElementById('printer');

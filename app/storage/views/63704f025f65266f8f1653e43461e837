@@ -1,6 +1,5 @@
-@extends('_layouts.default')
 
-@section('main')
+<?php $__env->startSection('main'); ?>
 <div class="span12">      		
 
     <div class="widget ">
@@ -20,17 +19,17 @@
                         <tr>
 <!--                            <td>Tahun Pelajaran</td>
                             <td>:</td>
-                            <td>{{ Form::select('tapel',$selectTapel,null,array('class'=>'input-medium')) }}</td>
+                            <td><?php echo Form::select('tapel',$selectTapel,null,array('class'=>'input-medium')); ?></td>
                             <td></td>-->
                             <td>No. Reg.</td>
                             <td>:</td>
-                            <td>{{ Form::text('regid',null,array('class'=>'input-medium','placeholder'=>'Nomor Registrasi')) }}</td>
+                            <td><?php echo Form::text('regid',null,array('class'=>'input-medium','placeholder'=>'Nomor Registrasi')); ?></td>
                             <td>Nama</td>
                             <td>:</td>
-                            <td>{{ Form::text('nama',null,array('class'=>'input-xlarge','placeholder'=>'Nama')) }}</td>
+                            <td><?php echo Form::text('nama',null,array('class'=>'input-xlarge','placeholder'=>'Nama')); ?></td>
                             <td>Tanggal</td>
                             <td>:</td>
-                            <td>{{ Form::text('tgl',date('d-m-Y'),array('class'=>'input-small datepicker','placeholder'=>'Nama')) }}</td>
+                            <td><?php echo Form::text('tgl',date('d-m-Y'),array('class'=>'input-small datepicker','placeholder'=>'Nama')); ?></td>
                             <td>&nbsp;</td>
                             <td><a class="btn btn-success" id="btn-tampil">Tampilkan</a></td>
                         </tr>
@@ -48,13 +47,13 @@
                         <tr>
                             <td>No. Reg.</td>
                             <td>:</td>
-                            <td>{{ Form::text('regid',null,array('required','class'=>'input-medium','placeholder'=>'Nomor Registrasi')) }}</td>
+                            <td><?php echo Form::text('regid',null,array('required','class'=>'input-medium','placeholder'=>'Nomor Registrasi')); ?></td>
                             <td>Nama</td>
                             <td>:</td>
-                            <td>{{ Form::text('nama',null,array('required','class'=>'input-xlarge','placeholder'=>'Nama')) }}</td>
+                            <td><?php echo Form::text('nama',null,array('required','class'=>'input-xlarge','placeholder'=>'Nama')); ?></td>
                             <td>Tanggal</td>
                             <td>:</td>
-                            <td>{{ Form::text('tgl',date('d-m-Y'),array('required','class'=>'input-small datepicker','placeholder'=>'Nama')) }}</td>
+                            <td><?php echo Form::text('tgl',date('d-m-Y'),array('required','class'=>'input-small datepicker','placeholder'=>'Nama')); ?></td>
                             <td>&nbsp;</td>
                             <td><button type="submit" class="btn btn-success" >Tampilkan</button></td>
                         </tr>
@@ -140,15 +139,16 @@
 </div>
 <div id="post-rest"></div>
 
-@stop
+<?php $__env->stopSection(); ?>
 
-@section('custom-script')
+<?php $__env->startSection('custom-script'); ?>
 <script type="text/javascript" src="qzprint/js/3rdparty/deployJava.js"></script>
 <script type="text/javascript" src="qzprint/js/qz-websocket.js"></script>
 
 
 <script type="text/javascript">
- 
+    
+
 /**
  * Re-use the new WebSockets deployment if available.  If not, fallback on the Oracle deployment
  */
@@ -527,7 +527,7 @@ function findPrinters() {
  *    qz.print();
  ***************************************************************************/
 function printEPL() {
-    var path = "{{URL::to('/')}}/";
+    var path = "<?php echo URL::to('/'); ?>/";
     if (notReady()) { return; }
 
     // Send characters/raw commands to qz using "append"
@@ -1257,7 +1257,7 @@ function chr(i) {
         }
 
         function searchByRegid(regid) {
-            var getCalonUrl = "{{ URL::to('transaksi/pelunasan/getcalonbyregid') }}" + "/" + regid;
+            var getCalonUrl = "<?php echo URL::to('transaksi/pelunasan/getcalonbyregid'); ?>" + "/" + regid;
             var rData = null;
             jQuery.ajax({
                 url: getCalonUrl,
@@ -1277,7 +1277,7 @@ function chr(i) {
          */
         jQuery('input[name=nama]').focus(function(data) {
             //get data calon siswa
-            var getCalonUrl = "{{ URL::to('transaksi/pelunasan/getcalons') }}";
+            var getCalonUrl = "<?php echo URL::to('transaksi/pelunasan/getcalons'); ?>";
             jQuery('#modal-search-calon .modal-body').html('<div class="loader" ></div>').load(getCalonUrl);
             jQuery('#modal-search-calon').modal('show');
         });
@@ -1307,11 +1307,11 @@ function chr(i) {
                 alert('Lengkapi data yang kosong.');
             } else {
                 //tampilkan status bayar
-                //var getStatusUrl = "{{ URL::to('transaksi/pelunasan/getstatusbayar') }}" +"/"+tapelid+"/"+regid;
-                var getStatusUrl = "{{ URL::to('transaksi/pelunasan/getstatusbayar') }}" + "/" + regid;
+                //var getStatusUrl = "<?php echo URL::to('transaksi/pelunasan/getstatusbayar'); ?>" +"/"+tapelid+"/"+regid;
+                var getStatusUrl = "<?php echo URL::to('transaksi/pelunasan/getstatusbayar'); ?>" + "/" + regid;
                 jQuery('#widget-status .widget .widget-content').html('<div class="loader"></div>').load(getStatusUrl);
                 //tampilkan histori pembayaran
-                var getPembayaranUrl = "{{ URL::to('transaksi/pelunasan/getdatapembayaran') }}" + "/" + regid;
+                var getPembayaranUrl = "<?php echo URL::to('transaksi/pelunasan/getdatapembayaran'); ?>" + "/" + regid;
                 jQuery('#widget-histori .widget .widget-content').html('<div class="loader"></div>').load(getPembayaranUrl);
 
                 //tampilkan widget yang hidden
@@ -1334,7 +1334,7 @@ function chr(i) {
          */
         jQuery(document).on('click', '.btn-lunasi', function(data) {
             var regnum = jQuery('input[name=regid]').val();
-            var getPelunasanUrl = "{{ URL::to('transaksi/pelunasan/lunasi') }}" + "/" + regnum;
+            var getPelunasanUrl = "<?php echo URL::to('transaksi/pelunasan/lunasi'); ?>" + "/" + regnum;
 //            jQuery('#modal-lunasi .modal-body').html('<div class="loader" ></div>').load(getPelunasanUrl);
 //            jQuery('#modal-lunasi').modal('show');
             jQuery('#widget-pelunasan .widget-content').load(getPelunasanUrl, null, function(data) {
@@ -1404,7 +1404,7 @@ function chr(i) {
             if (bolehsimpan()) {
                 
                 if (saveToDB()) {
-                    var cetakUrl = "{{ URL::to('transaksi/pelunasan/getnota') }}";
+                    var cetakUrl = "<?php echo URL::to('transaksi/pelunasan/getnota'); ?>";
                     var notaText;
                     $.ajax({
                         type: "POST",
@@ -1416,7 +1416,7 @@ function chr(i) {
                         success: function(data) {
                             notaText = data;
 //                            //alert(notaText);
-//                            QZPrint.findPrinter("{{ $appset->printeraddr }}");
+//                            QZPrint.findPrinter("<?php echo $appset->printeraddr; ?>");
 //                            QZPrint.append(notaText);
 //                            QZPrint.print();
 
@@ -1460,7 +1460,7 @@ function chr(i) {
         function saveToDB() {
             dataReg;
             dataBayar = [];
-            var simpanUrl = "{{ URL::to('transaksi/pelunasan/simpan') }}";
+            var simpanUrl = "<?php echo URL::to('transaksi/pelunasan/simpan'); ?>";
 
             dataReg = {
                 "regnum": jQuery('input[name=regid]').val(),
@@ -1502,4 +1502,6 @@ function chr(i) {
 
     });
 </script>
-@stop
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('_layouts.default', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
