@@ -1,0 +1,227 @@
+
+
+
+<?php $__env->startSection('main'); ?>
+<style>
+    .th-attention{
+        background: #D9EDF7;
+    }
+</style>
+
+<div class="span12">      		
+
+    <div class="widget ">
+
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h3>REPORT</h3>
+            <div class="pull-right" style="padding-right: 10px;" id="pdf-convert-tag">
+                <form  method="POST" action="rpt/to-pdf">
+                    <input type="hidden" name="awal" value="<?php echo $awal; ?>"/>
+                    <input type="hidden" name="akhir" value="<?php echo $akhir; ?>"/>
+                    <input type="hidden" name="tapel" value="<?php echo $tapel; ?>"/>
+                    <input type="hidden" name="jenis" value="<?php echo $jenis; ?>"/>
+                    <button type="submit" class="btn btn-info btn-pdf" >PDF</button>    
+                </form>                
+            </div>
+        </div> <!-- /widget-header -->
+
+        <div class="widget-content">
+            <div class="alert alert-info">
+                <form method="POST" action="rpt/show" >
+                <table class="table table-form">
+                    <tbody>
+                        <tr>
+                            <td>Tahun Pelajaran</td>
+                            <td>
+                                <?php echo Form::select('tapel', $selectTapel, $tapel, array('class' => 'span3','required')); ?>
+                            </td>
+                            <td>Jenis</td>
+                            <td>
+                                <?php $jenisarr=array('A'=>'TAMPILKAN SEMUA','D'=>'PEMBAYARAN','K'=>'PENGELUARAN'); ?>
+                                <?php echo Form::select('jenis', $jenisarr, $jenis, array('class' => 'span3','required')); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tentukan rentang waktu</td>
+                            <td><?php echo Form::text('awal', $awal, array('class' => 'datepicker span2', 'placeholder' => 'Tanggal Awal','required')); ?></td>
+                            <td></td>
+                            <td><?php echo Form::text('akhir', $akhir, array('class' => 'datepicker span2', 'placeholder' => 'Tanggal Akhir','required')); ?></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="5">
+                                <!--<a class="btn btn-success" id="btn-tampil" >Tampilkan</a>-->
+                                <button type="submit" class="btn btn-primary" >Tampil Komplit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+
+            <div id="table-data"></div>
+        </div> <!-- /widget-content -->
+
+    </div> <!-- /widget -->
+    
+    <div class="widget ">
+
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h3>DATA TABLE REPORT</h3>
+            <div class="pull-right" style="padding-right: 10px;" id="pdf-convert-tag">
+                
+            </div>
+        </div> <!-- /widget-header -->
+
+        <div class="widget-content">
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th colspan="2">Biaya</th>
+                        <th>Pembayaran</th>
+                        <th>Pengeluaran</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rownum=1; ?>
+                    <?php $pembayaran= 0; ?>
+                    <?php $pengeluaran = 0; ?>
+                    <?php $tgl=null; ?>
+                    <?php $regnum=null; ?>
+                    <?php $samerow=false; ?>
+                    <?php $totalperrow=0; ?>
+                    <?php $lasttipe=null;?>
+                    
+                    <?php foreach($data as $dt): ?>    
+                        <?php if($dt->tipe == 'D'): ?>
+                            <?php if($tgl == $dt->tgl && $regnum == $dt->regnum): ?>
+                                <?php $samerow=true; ?>
+                            <?php else: ?>
+                                <?php $samerow=false; ?>
+                                <?php $tgl=$dt->tgl; ?>
+                                <?php $regnum=$dt->regnum; ?>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php $samerow=false; ?>
+                        <?php endif; ?>
+
+                        <?php $border = (!$samerow?'style="border-top:2px solid darkgrey;"':'');?>
+                        
+                        <!--//tampilkan jumlah pembayaran di akhir yang samerow-->
+                        <?php if((!$samerow && $totalperrow > 0 && $dt->tipe == 'D' && $lasttipe != 'K') || ($dt->tipe == 'K' && $lasttipe == 'D') ): ?>
+                            <tr style="background: whitesmoke;" >
+                                <td colspan="5" class="uang">JUMLAH</td>
+                                <td class="uang th-attention" ><?php echo number_format($totalperrow,0,'.',','); ?></td>
+                                <td class="uang th-attention" ></td>
+                                <td></td>
+                            </tr>
+                        
+                        <?php endif; ?>
+
+                        <?php if($jenis == $dt->tipe || $jenis == 'A'): ?>                   
+                        <!--generate total row-->
+                        <tr >
+                            <td <?php echo $border; ?> >
+                                <?php if(!$samerow): ?>
+                                <?php echo $rownum++; ?>
+                                <?php endif; ?>
+                            </td>
+                            <td <?php echo $border; ?> >
+                                <?php if(!$samerow): ?>
+                                <?php echo date('d-m-Y',strtotime($dt->tgl)); ?>
+                                <?php endif; ?>
+                            </td>
+                            <td  <?php echo $border; ?> >
+
+                                <?php if($dt->tipe=='D'): ?>
+                                <?php if(!$samerow): ?>
+                                <?php echo $dt->calon . ' (' . $dt->regnum . ')'; ?>
+                                <?php endif; ?>
+                                <?php else: ?>
+                                <?php echo $dt->calon; ?>
+                                <?php endif; ?>                            
+                            </td>
+                            <td  <?php echo $border; ?> >
+                                <?php echo $dt->biaya; ?>
+                            </td <?php echo $border; ?> >
+                            <td class="uang" <?php echo $border; ?> >
+                                <!--PEMBAYARAN-->
+                                <?php if($dt->tipe=='D'): ?>
+                                    <?php echo number_format($dt->dibayar,0,'.',','); ?>
+                                    <?php $pembayaran+=$dt->dibayar; ?>
+                                    <?php if($samerow): ?>
+                                    <?php $totalperrow+=$dt->dibayar; ?>
+                                    <?php else: ?>
+                                    <?php $totalperrow=$dt->dibayar; ?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </td>
+                            <td class="uang th-attention" <?php echo $border; ?> ></td>
+                            <td class="uang th-attention" <?php echo $border; ?> >
+                                <!--PENGELUARAN-->
+                                <?php if($dt->tipe=='K'): ?>
+                                <?php echo number_format($dt->dibayar,0,'.',','); ?>
+                                <?php $pengeluaran+=$dt->dibayar; ?>
+                                <?php endif; ?>
+                            </td>
+                            <td <?php echo $border; ?> ></td>
+                        </tr>
+
+                            <?php if($samerow): ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php $lasttipe=$dt->tipe;?>
+                    
+                    <?php endforeach; ?>
+                    
+                    <!--jika data terakhir adalaha data pembayaran, maka tampilkan row jumlah pembayaran-->
+                    <?php if($lasttipe == 'D'): ?>
+                    <tr style="background: whitesmoke;" >
+                        <td colspan="5" class="uang">JUMLAH</td>
+                        <td class="uang th-attention" ><?php echo number_format($totalperrow,0,'.',','); ?></td>
+                        <td class="uang th-attention" ></td>
+                        <td></td>
+                    </tr>
+                    <?php endif; ?>
+                    
+                    <tr>
+                        <td colspan="8"></td>
+                    </tr>
+                    <tr style="background: whitesmoke;font-weight: bolder;font-size: large;color: black;">
+                        <td colspan="5" style="text-align: center;" >T O T A L</td>
+                        <td class="uang"><?php echo number_format($pembayaran,0,'.',','); ?></td>
+                        <td class="uang"><?php echo number_format($pengeluaran,0,'.',','); ?></td>
+                        <td ></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> <!-- /widget-content -->
+
+    </div> <!-- /widget -->
+
+</div> <!-- /span8 -->
+
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('custom-script'); ?>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        //Format Data table
+        $('.datatable').dataTable({
+            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                // Bold the grade for all 'A' grade browsers
+                var index = iDisplayIndexFull + 1;
+                $('td:eq(0)', nRow).html(index);
+                return nRow;
+            }
+        });
+    });
+</script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('_layouts.default', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

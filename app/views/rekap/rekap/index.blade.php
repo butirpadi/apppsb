@@ -16,6 +16,7 @@
 
         <div class="widget-content">
             <div class="alert alert-info">
+                <form method="POST" action="rpt" >
                 <table class="table table-form">
                     <tbody>
                         <tr>
@@ -32,10 +33,14 @@
                             <td>-</td>
                             <td><?php echo Form::text('akhir', null, array('class' => 'input-medium datepicker', 'placeholder' => 'Tanggal Awal')); ?></td>
                             <td></td>
-                            <td><a class="btn btn-success" id="btn-tampil" >Tampilkan</a></td>
+                            <td>
+                                <a class="btn btn-success" id="btn-tampil" >Tampilkan</a>
+                                <!--<button type="submit" class="btn btn-primary" >Tampil Komplit</button>-->
+                            </td>
                         </tr>
                     </tbody>
                 </table>
+                </form>
             </div>
 
             <div id="table-data"></div>

@@ -27,7 +27,14 @@ Route::group(array('before'=>'auth'), function() {
     Route::resource('home','App\Controllers\HomeController');
     
     Route::post('pengeluaran/addnew','App\Controllers\PengeluaranController@addnew');
+    Route::get('pengeluaran/edit/{id}','App\Controllers\PengeluaranController@edit');
+    Route::get('pengeluaran/delete/{id}','App\Controllers\PengeluaranController@delete');
+    Route::post('pengeluaran/postedit','App\Controllers\PengeluaranController@postedit');
     Route::resource('pengeluaran','App\Controllers\PengeluaranController');
+    
+//    Route::get('report', 'App\Controllers\ReportController@index');
+//    Route::resource('report', 'App\Controllers\ReportController');
+    Route::controller('rpt', 'App\Controllers\ReportController');
 });
 
 Route::group(array('before'=>'auth','prefix' => 'master'), function() {
