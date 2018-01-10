@@ -41,9 +41,9 @@ class ReportController extends \BaseController {
         $tapel = \Input::get('tapel');
 
         if ($jenis == 'A') {
-            $data = \DB::table("VIEW_REKAP")->whereBetween('tgl', array($awal, $akhir))->get();
+            $data = \DB::table("view_rekap")->whereBetween('tgl', array($awal, $akhir))->get();
         } else {
-            $data = \DB::table("VIEW_REKAP")->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
+            $data = \DB::table("view_rekap")->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
         }
 
 //        print_r($data);
@@ -216,15 +216,15 @@ class ReportController extends \BaseController {
 //                        where tgl between '" . $awal . "' and '" . $akhir . "'");
 
         if ($jenis == 'A') {
-            $masterData = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->get();
-            $childs = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->get();
+            $masterData = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->get();
+            $childs = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->get();
         } else {
-            $masterData = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
-            $childs = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
+            $masterData = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
+            $childs = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
         }
 
-        $totBayar = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->where('tipe', 'D')->sum('dibayar');
-        $totKeluar = \DB::table('VIEW_REKAP')->whereBetween('tgl', array($awal, $akhir))->where('tipe', 'K')->sum('dibayar');
+        $totBayar = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->where('tipe', 'D')->sum('dibayar');
+        $totKeluar = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->where('tipe', 'K')->sum('dibayar');
 
 
         $pdf = new \Fpdfrekap();
@@ -290,65 +290,135 @@ class ReportController extends \BaseController {
         $pdf->SetAutoPageBreak(true, 10);
         $pdf->AddPage();
 
-        //CONTENT SECTION
-        $rownum = 1;
-        $totalPembayaran = 0;
-        $totalPengeluaran = 0;
-        foreach ($masterData as $md) {
+        // NEW CONTENT REVISI
+        // END OF NEW CONTENT REVISI
 
-            if ($md->tipe == 'D') {
-                $pdf->Cell(10, 5, $rownum++, 'TLR', 0, 'R');
-                $pdf->Cell(15, 5, date('d/m', strtotime($md->tgl)), 'TLR', 0, 'L');
-                $pdf->Cell(55, 5, $md->calon, 'TLR', 0, 'L');
-                $pdf->Cell(25, 5, '', 'TLR', 0, 'R');
-                $pdf->Cell(25, 5, '', 'TLR', 0, 'R');
-                $jumlah = number_format($md->dibayar, 0, '.', ',');
-                $pdf->Cell(30, 5, '', 'TLR', 0, 'R');
-                $pdf->Cell(30, 5, ($md->tipe == 'K' ? $jumlah : ''), 'TLR', 1, 'R');
-
-                //loop childs
-                $totalperrow = 0;
-                $ketmu = false;
-                foreach ($childs as $ch) {
-                    if ($ch->tipe == 'D' && $ch->regnum == $md->regnum && $ch->tgl == $md->tgl) {
-                        $pdf->Cell(10, 5, '', 'LR', 0, 'R');
-                        $pdf->Cell(15, 5, '', 'LR', 0, 'R');
-                        $pdf->Cell(55, 5, '', 'LR', 0, 'R');
-                        $pdf->Cell(25, 5, $ch->biaya, 'LR', 0, 'L');
-                        $pdf->Cell(25, 5, number_format($ch->dibayar, 0, '.', ','), 'LR', 0, 'R');
-                        $pdf->Cell(30, 5, '', 'LR', 0, 'R');
-                        $pdf->Cell(30, 5, ($md->tipe == 'K' ? number_format($jumlah, 0, '.', ',') : ''), 'LR', 1, 'R');
-                        $totalperrow+=$ch->dibayar;
-                        $ketmu = true;
-                        $totalPembayaran+=$ch->dibayar;
-                    }
-                }
-                if ($ketmu) {
-                    //cetak total per row
-                    $pdf->Cell(10, 5, '', 'LR', 0, 'R');
-                    $pdf->Cell(15, 5, '', 'LR', 0, 'R');
-                    $pdf->Cell(55, 5, '', 'LR', 0, 'R');
-                    $pdf->Cell(50, 5, 'JUMLAH', 'TLR', 0, 'R');
-                    $pdf->Cell(30, 5, number_format($totalperrow, 0, '.', ','), 'LR', 0, 'R');
-                    $pdf->Cell(30, 5, '', 'LR', 1, 'R');
-                }
-            } else {
-                $pdf->Cell(10, 5, $rownum++, 1, 0, 'R');
-                $pdf->Cell(15, 5, date('d/m', strtotime($md->tgl)), 1, 0, 'L');
-                $pdf->Cell(105, 5, substr($md->calon, 0, 50), 1, 0, 'L');
-                $pdf->Cell(30, 5, '', 1, 0, 'L');
-                $jumlah = number_format($md->dibayar, 0, '.', ',');
-                $pdf->Cell(30, 5, ($md->tipe == 'K' ? $jumlah : ''), 1, 1, 'R');
-                $totalPengeluaran+=$md->dibayar;
-            }
+        $master_row;
+        // $chld=null;
+        if ($jenis == 'A') {
+            $master_row = \DB::select('select distinct(calon) from view_rekap where tgl between "' . $awal . '" and "' . $akhir . '"');
+            // $mstr = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->get();
+            $chld = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->get();
+        } else {
+            // $mstr = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
+            $master_row = \DB::select('select distinct(calon) from view_rekap where tgl between "' . $awal . '" and "' . $akhir . '" and tipe="' . $jenis . '"');
+            $chld = \DB::table('view_rekap')->whereBetween('tgl', array($awal, $akhir))->whereTipe($jenis)->get();
         }
 
+        $rownum=1;
+        $pdf->SetFontSize(9);
+        foreach($master_row as $mr){
+            $data_rekap = \DB::select('select * from view_rekap where tgl between "' . $awal . '" and "' . $akhir . '" and calon="'.$mr->calon.'"');
+            $dr_rownum=0;
+            $dr_lasrow = count($data_rekap)-1;
+            $jumlah = 0
+;            $jml = 0;
+            foreach($data_rekap as $dr){
+                if($dr_rownum == 0){
+                    $pdf->Cell(10, 5, $rownum++, 'TLR', 0, 'R');
+                    $pdf->Cell(15, 5, date('d/m', strtotime($dr->tgl)), 'TLR', 0, 'L');
+                    $pdf->Cell(55, 5, $dr->calon, 'TLR', 0, 'L');
+                    $pdf->Cell(25, 5, $dr->biaya, 'TLR', 0, 'R');
+                    $pdf->Cell(25, 5, ($dr->psbregistrasi_id != null ? number_format($dr->dibayar, 0, '.', ','):'') , 'TLR', 0, 'R');
+                    $jml += $dr->dibayar;
+                    $jumlah = number_format($jml, 0, '.', ',');
+                    $pdf->Cell(30, 5, ($dr->tipe == 'D' ? $jumlah : ''), 'TLR', 0, 'R');
+                    $pdf->Cell(30, 5, ($dr->tipe == 'K' ? $jumlah : ''), 'TLR', 1, 'R');
+                }elseif($dr_rownum == $dr_lasrow ){
+                        $pdf->Cell(10, 5, '', 'L', 0, 'R');
+                        $pdf->Cell(15, 5, '', 'L', 0, 'L');
+                        $pdf->Cell(55, 5, '', 'L', 0, 'L');
+                        $pdf->Cell(25, 5, $dr->biaya, 'L', 0, 'R');
+                        $pdf->Cell(25, 5, number_format($dr->dibayar, 0, '.', ','), 'L', 0, 'R');
+                        $jml += $dr->dibayar;
+                        $jumlah = number_format($jml, 0, '.', ',');
+                        $pdf->Cell(30, 5, ($dr->tipe == 'D' ? $jumlah : ''), 'L', 0, 'R');
+                        $pdf->Cell(30, 5, ($dr->tipe == 'K' ? $jumlah : ''), 'LR', 1, 'R');
+
+                    }else{
+                        // if($dr_rownum > 0){
+                            $pdf->Cell(10, 5, '', 'LR', 0, 'R');
+                            $pdf->Cell(15, 5, '', 'LR', 0, 'L');
+                            $pdf->Cell(55, 5, '', 'LR', 0, 'L');
+                            $pdf->Cell(25, 5, $dr->biaya, 'LR', 0, 'R');
+                            $pdf->Cell(25, 5, number_format($dr->dibayar, 0, '.', ','), 'LR', 0, 'R');
+                            $jml += $dr->dibayar;
+                            $jumlah = number_format($jml, 0, '.', ',');
+                            $pdf->Cell(30, 5, '', 'LR', 0, 'R');
+                            $pdf->Cell(30, 5, ($dr->tipe == 'K' ? $jumlah : ''), 'LR', 1, 'R');      
+                        // }
+                    }
+                    
+                // }
+
+
+                $dr_rownum++;
+            }
+
+        }
+
+        //CONTENT SECTION
+        // $rownum = 1;
+        // $totalPembayaran = 0;
+        // $totalPengeluaran = 0;
+        // foreach ($masterData as $md) {
+
+        //     if ($md->tipe == 'D') {
+        //         $pdf->Cell(10, 5, $rownum++, 'TLR', 0, 'R');
+        //         $pdf->Cell(15, 5, date('d/m', strtotime($md->tgl)), 'TLR', 0, 'L');
+        //         $pdf->Cell(55, 5, $md->calon, 'TLR', 0, 'L');
+        //         $pdf->Cell(25, 5, '', 'TLR', 0, 'R');
+        //         $pdf->Cell(25, 5, '', 'TLR', 0, 'R');
+        //         $jumlah = number_format($md->dibayar, 0, '.', ',');
+        //         $pdf->Cell(30, 5, '', 'TLR', 0, 'R');
+        //         $pdf->Cell(30, 5, ($md->tipe == 'K' ? $jumlah : ''), 'TLR', 1, 'R');
+
+        //         //loop childs
+        //         $totalperrow = 0;
+        //         $ketmu = false;
+        //         foreach ($childs as $ch) {
+        //             if ($ch->tipe == 'D' && $ch->regnum == $md->regnum && $ch->tgl == $md->tgl) {
+        //                 $pdf->Cell(10, 5, '', 'LR', 0, 'R');
+        //                 $pdf->Cell(15, 5, '', 'LR', 0, 'R');
+        //                 $pdf->Cell(55, 5, '', 'LR', 0, 'R');
+        //                 $pdf->Cell(25, 5, $ch->biaya . ' semangat', 'LR', 0, 'L');
+        //                 $pdf->Cell(25, 5, number_format($ch->dibayar, 0, '.', ','), 'LR', 0, 'R');
+        //                 $pdf->Cell(30, 5, '', 'LR', 0, 'R');
+        //                 $pdf->Cell(30, 5, ($md->tipe == 'K' ? number_format($jumlah, 0, '.', ',') : ''), 'LR', 1, 'R');
+        //                 $totalperrow+=$ch->dibayar;
+        //                 $ketmu = true;
+        //                 $totalPembayaran+=$ch->dibayar;
+        //             }
+        //         }
+        //         if ($ketmu) {
+        //             //cetak total per row
+        //             $pdf->Cell(10, 5, '', 'LR', 0, 'R');
+        //             $pdf->Cell(15, 5, '', 'LR', 0, 'R');
+        //             $pdf->Cell(55, 5, '', 'LR', 0, 'R');
+        //             $pdf->Cell(50, 5, 'JUMLAH', 'TLR', 0, 'R');
+        //             $pdf->Cell(30, 5, number_format($totalperrow, 0, '.', ','), 'LR', 0, 'R');
+        //             $pdf->Cell(30, 5, '', 'LR', 1, 'R');
+        //         }
+        //     } else {
+        //         $pdf->Cell(10, 5, $rownum++, 1, 0, 'R');
+        //         $pdf->Cell(15, 5, date('d/m', strtotime($md->tgl)), 1, 0, 'L');
+        //         $pdf->Cell(105, 5, substr($md->calon, 0, 50), 1, 0, 'L');
+        //         $pdf->Cell(30, 5, '', 1, 0, 'L');
+        //         $jumlah = number_format($md->dibayar, 0, '.', ',');
+        //         $pdf->Cell(30, 5, ($md->tipe == 'K' ? $jumlah : ''), 1, 1, 'R');
+        //         $totalPengeluaran+=$md->dibayar;
+        //     }
+        // }
+
         //generate TOTAL ROW
-        $pdf->SetFontSize(14);
+        // $pdf->SetFontSize(14);
         if ($jenis == 'A') {
-            $pdf->Cell(130, 5, 'SUB TOTAL', 1, 0, 'L');
+            $pdf->Cell(130, 5, 'SUB TOTAL', 1, 0, 'C');
             $pdf->Cell(30, 5, number_format($totBayar, 0, '.', ','), 1, 0, 'R');
             $pdf->Cell(30, 5, number_format($totKeluar, 0, '.', ','), 1, 1, 'R');
+            $pdf->Cell(130, 5, 'TOTAL', 1, 0, 'C');
+            $pdf->Cell(60, 5, number_format($totBayar-$totKeluar, 0, '.', ','), 1, 0, 'R');
+            // $pdf->Cell(30, 5, number_format($totKeluar, 0, '.', ','), 1, 1, 'R');
         } elseif ($jenis == 'D') {
             $pdf->Cell(130, 5, 'TOTAL PEMBAYARAN', 1, 0, 'L');
             $pdf->Cell(60, 5, number_format($totBayar, 0, '.', ','), 1, 1, 'R');

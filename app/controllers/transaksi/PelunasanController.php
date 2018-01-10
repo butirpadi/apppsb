@@ -192,7 +192,19 @@ class PelunasanController extends \BaseController {
         for ($i = 0; $i < $entercount; $i++) {
             $Data.="\n ";
         }
-        return $Data;
+        // return $Data;
+
+        // Printing Using PHP Copy
+        // REVISI TGL : 18/05/2017      
+        $tmpdir = sys_get_temp_dir();   # ambil direktori temporary untuk simpan file.
+        $file =  tempnam($tmpdir, 'ctk');  # nama file temporary yang akan dicetak
+        $handle = fopen($file, 'w');
+        // echo $Data;
+        fwrite($handle, $Data);
+        fclose($handle);
+        //copy($file, "//localhost/LX-300");  # Lakukan cetak
+        copy($file, $appset->printeraddr);  # Lakukan cetak
+        unlink($file);
     }
 
     public function getnotapilihan($regnum, $tgl) {
@@ -274,7 +286,19 @@ class PelunasanController extends \BaseController {
         for ($i = 0; $i < $entercount; $i++) {
             $Data.="\n ";
         }
-        return $Data;
+        // return $Data;
+
+        // Printing Using PHP Copy
+        // REVISI TGL : 18/05/2017      
+        $tmpdir = sys_get_temp_dir();   # ambil direktori temporary untuk simpan file.
+        $file =  tempnam($tmpdir, 'ctk');  # nama file temporary yang akan dicetak
+        $handle = fopen($file, 'w');
+        // echo $Data;
+        fwrite($handle, $Data);
+        fclose($handle);
+        //copy($file, "//localhost/LX-300");  # Lakukan cetak
+        copy($file, $appset->printeraddr);  # Lakukan cetak
+        unlink($file);
     }
 
     public function generate_space($space, $kata) {
@@ -338,12 +362,12 @@ class PelunasanController extends \BaseController {
             $bayar = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $regid)->where('tgl', $tgl)->first();
 //            $bayar = \DB::table('psb_pembayaran')->find($id);
             $calon = \DB::table('psb_calon_siswa')->where('id', \DB::table('psb_registrasi')->where('id', $bayar->psbregistrasi_id)->first()->psbcalonsiswa_id)->first();
-            $databayar = \DB::table('VIEW_PSB_PEMBAYARAN')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
+            $databayar = \DB::table('view_psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
             $total = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->sum('dibayar');
         } else {
             $bayar = \DB::table('psb_pembayaran')->find($id);
             $calon = \DB::table('psb_calon_siswa')->where('id', \DB::table('psb_registrasi')->where('id', $bayar->psbregistrasi_id)->first()->psbcalonsiswa_id)->first();
-            $databayar = \DB::table('VIEW_PSB_PEMBAYARAN')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
+            $databayar = \DB::table('view_psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->get();
             $total = \DB::table('psb_pembayaran')->where('psbregistrasi_id', $bayar->psbregistrasi_id)->where('tgl', $bayar->tgl)->sum('dibayar');
         }
 

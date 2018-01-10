@@ -1193,7 +1193,6 @@ function chr(i) {
 
         });
         jQuery('#btn-simpan-cetak').click(function() {
-            alert('cetak nota...');
             //load aplet
             //simpan data
             if (bolehSimpan()) {

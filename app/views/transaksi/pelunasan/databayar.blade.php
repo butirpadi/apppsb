@@ -55,33 +55,39 @@
 //                var appletTag = '<applet id="qz" archive="{{ URL::to('jar/qz-print.jar') }} " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="{{ URL::to('jar/qz-print_jnlp.jnlp') }}"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
 //                jQuery('#applet-tag').html(appletTag);
                 //print nota
-                jQuery.get(getnotaUrl, null, function (data) {
-//                    QZPrint.findPrinter("{{ $appset->printeraddr }}");
-//                    QZPrint.append(data);
-//                    QZPrint.print();
+//                 jQuery.get(getnotaUrl, null, function (data) {
+// //                    QZPrint.findPrinter("{{ $appset->printeraddr }}");
+// //                    QZPrint.append(data);
+// //                    QZPrint.print();
 
-                    alert('Cetak nota sedang diproses.');
-                    var printer = "{{ $appset->printeraddr }}";
-                    //Printing
-                    qz.findPrinter(printer);
-                    // Automatically gets called when "qz.findPrinter()" is finished.
-                    window['qzDoneFinding'] = function () {
-                        var p = document.getElementById('printer');
-                        var printer = qz.getPrinter();
+//                     alert('Cetak nota sedang diproses.');
+//                     var printer = "{{ $appset->printeraddr }}";
+//                     //Printing
+//                     qz.findPrinter(printer);
+//                     // Automatically gets called when "qz.findPrinter()" is finished.
+//                     window['qzDoneFinding'] = function () {
+//                         var p = document.getElementById('printer');
+//                         var printer = qz.getPrinter();
 
-                        // Alert the printer name to user
-                        alert(printer !== null ? 'Printer found: "' + printer +
-                                '" after searching for "' + p.value + '"' : 'Printer "' +
-                                p.value + '" not found.');
+//                         // Alert the printer name to user
+//                         alert(printer !== null ? 'Printer found: "' + printer +
+//                                 '" after searching for "' + p.value + '"' : 'Printer "' +
+//                                 p.value + '" not found.');
 
-                        // Remove reference to this function
-                        window['qzDoneFinding'] = null;
-                    };
-                    qz.append(data);
-                    qz.append('\n');
-                    qz.print();
-                    //DONe Printing
-                });
+//                         // Remove reference to this function
+//                         window['qzDoneFinding'] = null;
+//                     };
+//                     qz.append(data);
+//                     qz.append('\n');
+//                     qz.print();
+//                     //DONe Printing
+//                 });
+
+                    // Printing Using PHP Copy
+                    // REVISI TGL : 18/05/2017
+                    jQuery.get(getnotaUrl,null,function(data){
+                        alert('Cetak nota sedang diproses.');
+                    });
 
                 //location.reload();   
             }
