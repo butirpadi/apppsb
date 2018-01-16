@@ -1,0 +1,65 @@
+<style type="text/css">
+    table select{
+        margin:0;
+    }
+</style>
+
+<table class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Registrasi ID</th>
+            <th>Nama</th>
+            <th>Jenis Kelamin</th>
+            <th>Rombel</th>
+            <th class="td-actions" ></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $rownum = 1; ?>
+        <?php foreach($calon as $dt): ?>
+        <tr>
+            <td><?php echo $rownum++; ?></td>
+            <td><?php echo $dt->regnum; ?></td>
+            <td><?php echo $dt->nama; ?></td>
+            <td style="text-align: center;">
+                <?php if($dt->jenis_kelamin == 'L'): ?>
+                <span class="label label-info">Laki-laki</span>
+                <?php else: ?>
+                <span class="label label-warning">Perempuan</span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if($dt->rombeli_id != null || $dt->rombel_id != ''): ?>                
+                <?php echo Form::select('rombel_' . $dt->id,$selectRombel,null,array('class'=>'input-large select-rombel sembunyi')); ?>
+                <span class="label label-success" id="rombelcalon_<?php echo $dt->id; ?>" ><?php echo $dt->rombel->nama; ?></span>
+                <?php else: ?>
+                <?php echo Form::select('rombel_' . $dt->id,$selectRombel,null,array('class'=>'input-large select-rombel')); ?>
+                <?php endif; ?>
+            </td>
+            <td style="text-align: center;">
+                <?php if($dt->rombeli_id != null || $dt->rombel_id != ''): ?>
+                <a class="btn btn-warning btn-batal-distribusi btn-mini " id="btn-batal-<?php echo $dt->id; ?>" siswaid="<?php echo $dt->siswa_id; ?>" calonid="<?php echo $dt->id; ?>" regnum="<?php echo $dt->regnum; ?>" >&nbsp;&nbsp;Batal&nbsp;&nbsp;</a>
+                <a class="btn btn-success btn-simpan-distribusi btn-mini sembunyi" id="btn-simpan-<?php echo $dt->id; ?>" calonid="<?php echo $dt->id; ?>" regnum="<?php echo $dt->regnum; ?>" >Simpan</a>
+                <?php else: ?>
+                <a class="btn btn-warning btn-batal-distribusi btn-mini sembunyi" id="btn-batal-<?php echo $dt->id; ?>" siswaid="<?php echo $dt->siswa_id; ?>" calonid="<?php echo $dt->id; ?>" regnum="<?php echo $dt->regnum; ?>" >&nbsp;&nbsp;Batal&nbsp;&nbsp;</a>
+                <a class="btn btn-success btn-simpan-distribusi btn-mini " id="btn-simpan-<?php echo $dt->id; ?>" calonid="<?php echo $dt->id; ?>" regnum="<?php echo $dt->regnum; ?>" >Simpan</a>
+                <?php endif; ?>
+                
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div id="post-rest"></div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        // drawDatatable();
+        //set ke 0 untuk rombel
+        jQuery('.select-rombel').val([]);
+        jQuery('.sembunyi').hide();
+        
+    });
+</script>

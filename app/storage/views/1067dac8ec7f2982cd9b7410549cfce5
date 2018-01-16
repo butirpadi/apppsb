@@ -1,0 +1,48 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Nama Calon</th>
+            <th>Pembayaran</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $rownum=1; ?>
+        <?php $total=0; ?>
+        <?php foreach($pembayaran as $dt): ?>
+        <tr >
+            <td style="vertical-align: top;"><?php echo $rownum++; ?></td>
+            <td style="vertical-align: top;"><?php echo date('d-m-Y',strtotime($dt->tgl)); ?></td>
+            <td style="vertical-align: top;"><?php echo $dt->registrasi->calonsiswa->nama; ?></td>
+            <td>
+                <table class="table" >
+                    <tbody>
+                        <?php $totalbayar=0; ?>
+                        <?php foreach($pembayarans as $dt2): ?>
+                            <?php if($dt2->tgl == $dt->tgl && $dt2->psbregistrasi_id == $dt->psbregistrasi_id): ?>
+                            <tr>
+                                <td style="border: none; border-bottom: thin solid #dddddd;"><?php echo $dt2->biaya->nama; ?></td>
+                                <td style="border: none; border-bottom: thin solid #dddddd;">:</td>
+                                <td class="uang" style="border: none;border-bottom: thin solid #dddddd;"><?php echo number_format($dt2->dibayar,0,',','.'); ?></td>
+                            </tr>
+                            <?php $totalbayar+=$dt2->dibayar; ?>
+                            <?php $total += $dt2->dibayar  ?>
+                            <?php else: ?>
+                            <?php endif; ?>
+                            
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </td>
+            <td style="vertical-align: bottom;" class="uang"><?php echo number_format($totalbayar,0,',','.'); ?></td>
+        </tr>
+        <?php endforeach; ?>
+        
+        <tr style="background-color: whitesmoke;color: #2c2c2c;font-size: 1.5em;">
+            <td colspan="4">T O T A L</td>    
+            <td style="text-align: right;"><?php echo number_format($total,0,',','.'); ?></td>    
+        </tr>
+    </tbody>
+</table>
