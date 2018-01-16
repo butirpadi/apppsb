@@ -1,6 +1,5 @@
-@extends('_layouts.default')
 
-@section('main')
+<?php $__env->startSection('main'); ?>
 
 <div class="span12">      		
 
@@ -27,26 +26,26 @@
                 <tbody>
 
                     <?php $rownum = 1; ?>
-                    @foreach($tapel as $dt)
-                    <tr id="{{ 'row_' . $dt->id }}" >
-                        <td class="nomer"> {{ $rownum++ }}</td>
-                        <td> {{ $dt->nama }}</td>
+                    <?php foreach($tapel as $dt): ?>
+                    <tr id="<?php echo 'row_' . $dt->id; ?>" >
+                        <td class="nomer"> <?php echo $rownum++; ?></td>
+                        <td> <?php echo $dt->nama; ?></td>
                         <td> 
-                            @foreach($dt->biayas as $dt1)
-                            {{ $dt1->nama . ', ' }}
-                            @endforeach
+                            <?php foreach($dt->biayas as $dt1): ?>
+                            <?php echo $dt1->nama . ', '; ?>
+                            <?php endforeach; ?>
                         </td>
                         <td style="text-align: center;">
                             <!-- Revisi 17-01-2018 -->
-                            @if($dt->gelombang)
-                                <a href="{{ URL::route('master.setbiaya.edit',$dt->id) }}" class="btn btn-mini btn-success">Edit</a>                                
-                            @else
-                                <a href="master/gelombang/{{$dt->id}}/edit" class="btn btn-mini btn-danger">Set Gelombang</a>                     
-                            @endif
+                            <?php if($dt->gelombang): ?>
+                                <a href="<?php echo URL::route('master.setbiaya.edit',$dt->id); ?>" class="btn btn-mini btn-success">Edit</a>                                
+                            <?php else: ?>
+                                <a href="master/gelombang/<?php echo $dt->id; ?>/edit" class="btn btn-mini btn-danger">Set Gelombang</a>                     
+                            <?php endif; ?>
 
                         </td>
                     </tr>
-                    @endforeach
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div> <!-- /widget-content -->
@@ -55,12 +54,13 @@
 
 </div> <!-- /span8 -->
 
-@stop
+<?php $__env->stopSection(); ?>
 
-@section('custom-script')
+<?php $__env->startSection('custom-script'); ?>
 <script type="text/javascript">
     jQuery(document).ready(function(){
         drawDatatable();
     });
 </script>
-@stop
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('_layouts.default', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

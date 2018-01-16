@@ -11,7 +11,10 @@ class SetbiayaController extends \BaseController {
      * @return Response
      */
     public function index() {
-        return \View::make('master.setbiaya.index')->with('tapel', \App\Models\Tapel::all());
+        $tapel = \App\Models\Tapel::all();
+
+        return \View::make('master.setbiaya.index')
+                ->with('tapel', $tapel);
     }  
     
 
@@ -55,7 +58,9 @@ class SetbiayaController extends \BaseController {
      * @return Response
      */
     public function edit($id) {
-        return \View::make('master.setbiaya.edit')->with('tapel', \App\Models\Tapel::find($id))->with('biaya', \App\Models\Biaya::all());
+        return \View::make('master.setbiaya.edit')
+                ->with('tapel', \App\Models\Tapel::find($id))
+                ->with('biaya', \App\Models\Biaya::all());
     }
     
     /**
