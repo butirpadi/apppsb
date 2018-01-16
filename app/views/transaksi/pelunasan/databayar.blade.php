@@ -11,18 +11,22 @@
     </thead>
     <tbody>
         <?php $rownum = 1; ?>
-        <?php $tgl = null; ?>
+        <?php //$tgl = null; ?>
+        <?php $reg_counter = null; ?>
         @foreach($calon->registrasi->pembayarans as $dt)
         <tr>
             <td>{{ $rownum++ }}</td>
             <td>
-                @if($dt->tgl == $tgl)
+                <!-- Revisi 16-01-2018 -->
+                <!-- if($dt->tgl == $tgl) -->
+                @if($dt->reg_counter == $reg_counter)
                 @else
-                <a class="btn btn-mini btn-cetak-nota" tgl="{{ date('d-m-Y',strtotime($dt->tgl)) }}" ><i class="icon-copy"></i></a>
+                <a data-counter="{{$dt->reg_counter}}" class="btn btn-mini btn-cetak-nota" tgl="{{ date('d-m-Y',strtotime($dt->tgl)) }}" ><i class="icon-copy"></i></a>
                 @endif
             </td>
             <td style="text-align: center;">
-                @if($dt->tgl == $tgl)
+                <!-- if($dt->tgl == $tgl) -->
+                @if($dt->reg_counter == $reg_counter)
                 -"-
                 @else
                 {{ date('d-m-Y',strtotime($dt->tgl)) }}
@@ -31,14 +35,16 @@
             <td>{{ $dt->biaya->nama }}</td>
             <td style="text-align: right;">{{ number_format($dt->dibayar,0,',','.') }}</td>
             <td>
-                @if($dt->tgl == $tgl)
+                <!-- if($dt->tgl == $tgl) -->
+                @if($dt->reg_counter == $reg_counter)
                 @else
-                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/{{$dt->id}}" >Edit</a>
+                    <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/{{$dt->id}}" >Edit</a>
                 @endif
 
             </td>
         </tr>
-        <?php $tgl = $dt->tgl; ?>
+        <?php //$tgl = $dt->tgl; ?>
+        <?php $reg_counter = $dt->reg_counter; ?>
         @endforeach
     </tbody>
 </table>
@@ -50,7 +56,13 @@
             if (confirm('Anda akan mencetak Nota untuk data pembayaran ini?')) {
                 var tgl = jQuery('.btn-cetak-nota').attr('tgl');
                 var regnum = jQuery('input[name=regid]').val();
-                var getnotaUrl = "{{ URL::to('transaksi/pelunasan/getnotapilihan') }}" + "/" + regnum + "/" + tgl;
+                // revisi 16-01-2018
+                var counter = $(this).data('counter');
+                var getnotaUrl = "{{ URL::to('transaksi/pelunasan/getnotapilihan') }}" + "/" + regnum + "/" + tgl+"/"+counter;
+                // alert(getnotaUrl);
+                // ----------------------
+                // var getnotaUrl = "{{ URL::to('transaksi/pelunasan/getnotapilihan') }}" + "/" + regnum + "/" + tgl;
+                // alert(getnotaUrl);
                 //set applet
 //                var appletTag = '<applet id="qz" archive="{{ URL::to('jar/qz-print.jar') }} " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="{{ URL::to('jar/qz-print_jnlp.jnlp') }}"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
 //                jQuery('#applet-tag').html(appletTag);

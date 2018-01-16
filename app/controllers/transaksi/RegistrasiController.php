@@ -127,6 +127,17 @@ class RegistrasiController extends \BaseController {
             ));
             echo 'Registrasi ID : ' . $regId . '<br/>';
             //insert ke psb_pembayaran
+            //
+            // revisi 16012018
+            $appset = \App\Models\Appsetting::first();
+            $reg_counter = $appset->psb_reg_payment_counter;
+            echo 'psb_reg_payment_counter : ' . $reg_counter . '<br/>';
+            // update reg counter
+            \DB::table('appsetting')->update([
+                'psb_reg_payment_counter' => $reg_counter+1
+            ]);
+            // --------------------------------------
+
             for ($i = 0; $i < count($dataBayar); $i++) {
                 echo 'Begin insert pembayaran ... <br/>';
                 \DB::table('psb_pembayaran')->insert(array(
@@ -137,6 +148,7 @@ class RegistrasiController extends \BaseController {
                     'harusbayar' => $dataBayar[$i]->harusbayar,
                     'dibayar' => $dataBayar[$i]->dibayar,
                     'potongan' => $dataBayar[$i]->potongan,
+                    'reg_counter' => $reg_counter,
                     'tgl' => date('Y-m-d',strtotime($dataReg->tgl))
                 ));
                 echo 'insert data ke ' . ($i + 1) . '<br/>';
@@ -274,6 +286,53 @@ class RegistrasiController extends \BaseController {
      */
     public function destroy($id) {
         //
+    }
+
+    public function postCetakNotaRegistrasi(){
+        echo \Input::get('nota_text');
+        $appset = \App\Models\Appsetting::first();
+        $Data = "";
+        $condensed = Chr(27) . Chr(33) . Chr(4);
+        $bold1 = Chr(27) . Chr(69);
+        $bold0 = Chr(27) . Chr(70);
+        $initialized = chr(27) . chr(64);
+        $condensed1 = chr(15);
+        $condensed0 = chr(18);
+        
+        $Data = $initialized;
+        $Data .= $condensed1;
+        $Data .= \Input::get('nota_text');
+
+        // Printing Using PHP Copy
+        // REVISI TGL : 18/05/2017      
+        $tmpdir = sys_get_temp_dir();   # ambil direktori temporary untuk simpan file.
+        $file =  tempnam($tmpdir, 'ctk');  # nama file temporary yang akan dicetak
+        $handle = fopen($file, 'w');
+        // echo $Data;
+        fwrite($handle, $Data);
+        fclose($handle);
+        //copy($file, "//localhost/LX-300");  # Lakukan cetak
+        // copy($file, $appset->printeraddr);  # Lakukan cetak
+        // unlink($file);
+        
+        // Revisi 16-01-2018
+        if($appset->using_winrawprint == 'Y'){
+                // using raw printer app
+            exec($appset->winrawprint_loc . ' -p "' . $appset->printeraddr . '" '. $file);
+        }else{
+            // using copy
+            copy($file, $appset->printeraddr);  # Lakukan cetak                                    
+        }
+        unlink($file);
+    }
+
+    public function getTest(){
+        $appset = \App\Models\Appsetting::first();
+        $reg_counter = $appset->psb_reg_payment_counter;
+            echo 'psb_reg_payment_counter : ' . $reg_counter . '<br/>';
+        \DB::table('appsetting')->update([
+                'psb_reg_payment_counter' => $reg_counter+1
+            ]);
     }
 
 }

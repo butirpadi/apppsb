@@ -99,6 +99,16 @@ class PelunasanController extends \BaseController {
             $calon = \App\Models\Calonsiswa::where('regnum', $datareg->regnum)->first();
             $registrasi = $calon->registrasi;
 
+            // revisi 16012018
+            $appset = \App\Models\Appsetting::first();
+            $reg_counter = $appset->psb_reg_payment_counter;
+            echo 'psb_reg_payment_counter : ' . $reg_counter . '<br/>';
+            // update reg counter
+            \DB::table('appsetting')->update([
+                'psb_reg_payment_counter' => $reg_counter+1
+            ]);
+            // --------------------------------------
+
             echo 'begin transaction.....<br/>';
             //insert ke psb_pembayaran
             for ($i = 0; $i < count($databayar); $i++) {
@@ -111,6 +121,7 @@ class PelunasanController extends \BaseController {
                     'harusbayar' => $databayar[$i]->harusbayar,
                     'dibayar' => $databayar[$i]->dibayar,
                     'potongan' => $databayar[$i]->potongan,
+                    'reg_counter' => $reg_counter,
                     'tgl' => date('Y-m-d', strtotime($datareg->tgl))
                 ));
                 echo 'insert data ke ' . ($i + 1) . '<br/>';
@@ -203,15 +214,26 @@ class PelunasanController extends \BaseController {
         fwrite($handle, $Data);
         fclose($handle);
         //copy($file, "//localhost/LX-300");  # Lakukan cetak
-        copy($file, $appset->printeraddr);  # Lakukan cetak
+        // copy($file, $appset->printeraddr);  # Lakukan cetak
+        // 
+        // Revisi 16-01-2018
+        if($appset->using_winrawprint == 'Y'){
+                // using raw printer app
+            exec($appset->winrawprint_loc . ' -p "' . $appset->printeraddr . '" '. $file);
+        }else{
+            // using copy
+            copy($file, $appset->printeraddr);  # Lakukan cetak                                    
+        }
+        
         unlink($file);
     }
 
-    public function getnotapilihan($regnum, $tgl) {
+    public function getnotapilihan($regnum, $tgl, $counter=null) {
         $tglPembayaran = date('Y-m-d', strtotime($tgl));
         $calon = \App\Models\Calonsiswa::where('regnum', $regnum)->first();
         $reg = $calon->registrasi;
-        $pembayaran = $reg->pembayarans()->where('tgl', $tglPembayaran)->get();
+        // $pembayaran = $reg->pembayarans()->where('tgl', $tglPembayaran)->get();
+        $pembayaran = $reg->pembayarans()->where('reg_counter', $counter)->get();
 
         $Data = "";
         $condensed = Chr(27) . Chr(33) . Chr(4);
@@ -297,7 +319,17 @@ class PelunasanController extends \BaseController {
         fwrite($handle, $Data);
         fclose($handle);
         //copy($file, "//localhost/LX-300");  # Lakukan cetak
-        copy($file, $appset->printeraddr);  # Lakukan cetak
+        // copy($file, $appset->printeraddr);  # Lakukan cetak
+        // unlink($file);
+        
+        // Revisi 16-01-2018
+        if($appset->using_winrawprint == 'Y'){
+                // using raw printer app
+            exec($appset->winrawprint_loc . ' -p "' . $appset->printeraddr . '" '. $file);
+        }else{
+            // using copy
+            copy($file, $appset->printeraddr);  # Lakukan cetak                                    
+        }
         unlink($file);
     }
 
@@ -431,6 +463,36 @@ class PelunasanController extends \BaseController {
         }
         $appset = \App\Models\Appsetting::first();
         return \View::make('transaksi.pelunasan.testprint', array('selectTapel' => $selectTapel, 'appset' => $appset));
+    }
+
+    public function getRecalculateCounter(){
+        $regs = \DB::table('psb_registrasi')->get();
+        foreach($regs as $reg){
+            echo '------------------------------------------------------------<br/>';
+            echo 'Recalculate : PSB Registrasi ID ' . $reg->id .'<br/>'; 
+            $pembayaran_by_tgl = \DB::table('psb_pembayaran')
+                                    ->where('psbregistrasi_id','=',$reg->id)
+                                    ->groupBy('tgl')
+                                    ->get();
+            foreach($pembayaran_by_tgl as $pbg){
+                $appset = \App\Models\Appsetting::first();
+                $reg_counter = $appset->psb_reg_payment_counter;
+                echo 'psb_reg_payment_counter : ' . $reg_counter . '<br/>';
+                // update reg counter
+                \DB::table('appsetting')->update([
+                    'psb_reg_payment_counter' => $reg_counter+1
+                ]); 
+                
+                \DB::table('psb_pembayaran')
+                    ->where('psbregistrasi_id','=',$reg->id)
+                    ->where('tgl','=',$pbg->tgl)
+                    ->update([
+                        'reg_counter'=>$reg_counter
+                    ]);
+                
+            }
+
+        }
     }
 
 }

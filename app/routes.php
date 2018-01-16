@@ -72,15 +72,19 @@ Route::group(array('before'=>'auth','prefix' => 'transaksi'), function() {
        
     Route::post('registrasi/getnota', 'App\Controllers\Transaksi\RegistrasiController@getnota');
     Route::get('registrasi/cetak', 'App\Controllers\Transaksi\RegistrasiController@cetak');
+    Route::get('registrasi/test', 'App\Controllers\Transaksi\RegistrasiController@getTest');
     Route::get('registrasi/getgelombang/{id}', 'App\Controllers\Transaksi\RegistrasiController@getgelombang');
     Route::get('registrasi/getbiaya/{id}/{gel}/{jk}', 'App\Controllers\Transaksi\RegistrasiController@getbiaya');
     Route::get('registrasi/getregid/{id}', 'App\Controllers\Transaksi\RegistrasiController@getregid');
     Route::post('registrasi/simpan', 'App\Controllers\Transaksi\RegistrasiController@simpan');
     Route::resource('registrasi', 'App\Controllers\Transaksi\RegistrasiController');
+    Route::post('registrasi/cetak-nota-registrasi', 'App\Controllers\Transaksi\RegistrasiController@postCetakNotaRegistrasi');
     
     Route::resource('pembayaran', 'App\Controllers\Transaksi\PembayaranController');
     
     Route::get('pelunasan/getnotapilihan/{regnum}/{tgl}', 'App\Controllers\Transaksi\PelunasanController@getnotapilihan');
+    Route::get('pelunasan/getnotapilihan/{regnum}/{tgl}/{counter}', 'App\Controllers\Transaksi\PelunasanController@getnotapilihan');
+    Route::get('pelunasan/recalculate-counter', 'App\Controllers\Transaksi\PelunasanController@getRecalculateCounter');
     Route::post('pelunasan/getnota', 'App\Controllers\Transaksi\PelunasanController@getnota');
     Route::post('pelunasan/simpan', 'App\Controllers\Transaksi\PelunasanController@simpan');
     Route::get('pelunasan/lunasi/{regid}', 'App\Controllers\Transaksi\PelunasanController@getlunasi');

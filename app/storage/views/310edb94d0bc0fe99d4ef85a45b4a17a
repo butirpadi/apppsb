@@ -11,18 +11,22 @@
     </thead>
     <tbody>
         <?php $rownum = 1; ?>
-        <?php $tgl = null; ?>
+        <?php //$tgl = null; ?>
+        <?php $reg_counter = null; ?>
         <?php foreach($calon->registrasi->pembayarans as $dt): ?>
         <tr>
             <td><?php echo $rownum++; ?></td>
             <td>
-                <?php if($dt->tgl == $tgl): ?>
+                <!-- Revisi 16-01-2018 -->
+                <!-- if($dt->tgl == $tgl) -->
+                <?php if($dt->reg_counter == $reg_counter): ?>
                 <?php else: ?>
-                <a class="btn btn-mini btn-cetak-nota" tgl="<?php echo date('d-m-Y',strtotime($dt->tgl)); ?>" ><i class="icon-copy"></i></a>
+                <a data-counter="<?php echo $dt->reg_counter; ?>" class="btn btn-mini btn-cetak-nota" tgl="<?php echo date('d-m-Y',strtotime($dt->tgl)); ?>" ><i class="icon-copy"></i></a>
                 <?php endif; ?>
             </td>
             <td style="text-align: center;">
-                <?php if($dt->tgl == $tgl): ?>
+                <!-- if($dt->tgl == $tgl) -->
+                <?php if($dt->reg_counter == $reg_counter): ?>
                 -"-
                 <?php else: ?>
                 <?php echo date('d-m-Y',strtotime($dt->tgl)); ?>
@@ -31,14 +35,16 @@
             <td><?php echo $dt->biaya->nama; ?></td>
             <td style="text-align: right;"><?php echo number_format($dt->dibayar,0,',','.'); ?></td>
             <td>
-                <?php if($dt->tgl == $tgl): ?>
+                <!-- if($dt->tgl == $tgl) -->
+                <?php if($dt->reg_counter == $reg_counter): ?>
                 <?php else: ?>
-                <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/<?php echo $dt->id; ?>" >Edit</a>
+                    <a class="btn btn-primary btn-mini"  href="transaksi/pelunasan/editbayar/<?php echo $dt->id; ?>" >Edit</a>
                 <?php endif; ?>
 
             </td>
         </tr>
-        <?php $tgl = $dt->tgl; ?>
+        <?php //$tgl = $dt->tgl; ?>
+        <?php $reg_counter = $dt->reg_counter; ?>
         <?php endforeach; ?>
     </tbody>
 </table>
@@ -50,7 +56,13 @@
             if (confirm('Anda akan mencetak Nota untuk data pembayaran ini?')) {
                 var tgl = jQuery('.btn-cetak-nota').attr('tgl');
                 var regnum = jQuery('input[name=regid]').val();
-                var getnotaUrl = "<?php echo URL::to('transaksi/pelunasan/getnotapilihan'); ?>" + "/" + regnum + "/" + tgl;
+                // revisi 16-01-2018
+                var counter = $(this).data('counter');
+                var getnotaUrl = "<?php echo URL::to('transaksi/pelunasan/getnotapilihan'); ?>" + "/" + regnum + "/" + tgl+"/"+counter;
+                // alert(getnotaUrl);
+                // ----------------------
+                // var getnotaUrl = "<?php echo URL::to('transaksi/pelunasan/getnotapilihan'); ?>" + "/" + regnum + "/" + tgl;
+                // alert(getnotaUrl);
                 //set applet
 //                var appletTag = '<applet id="qz" archive="<?php echo URL::to('jar/qz-print.jar'); ?> " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="<?php echo URL::to('jar/qz-print_jnlp.jnlp'); ?>"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
 //                jQuery('#applet-tag').html(appletTag);

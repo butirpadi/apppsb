@@ -1,6 +1,5 @@
-@extends('_layouts.default')
 
-@section('main')
+<?php $__env->startSection('main'); ?>
 <div class="span12">      		
 
     <div class="widget ">
@@ -21,14 +20,14 @@
                 <div class="control-group">											
                     <label class="control-label" >Tahun Pelajaran</label>
                     <div class="controls">
-                        {{ Form::select('tapel',$selectTapel,null,array('class'=>'input-medium')) }}
+                        <?php echo Form::select('tapel',$selectTapel,null,array('class'=>'input-medium')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
                 
                 <div class="control-group">											
                     <label class="control-label" >Tanggal</label>
                     <div class="controls">
-                        {{ Form::text('tgl',date('d-m-Y'),array('class'=>'input-small datepicker','required')) }}
+                        <?php echo Form::text('tgl',date('d-m-Y'),array('class'=>'input-small datepicker','required')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
 
@@ -42,20 +41,20 @@
                 <div class="control-group">											
                     <label class="control-label" >Nomor Registrasi</label>
                     <div class="controls">
-                        {{ Form::text('regid',null,array('class'=>'input-medium','required','readonly','autocomplete'=>'off','style'=>'font-size:2em;width:200px;height:50px;text-align:center;')) }}
+                        <?php echo Form::text('regid',null,array('class'=>'input-medium','required','readonly','autocomplete'=>'off','style'=>'font-size:2em;width:200px;height:50px;text-align:center;')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
                 <div class="control-group">											
                     <label class="control-label" >Nama</label>
                     <div class="controls">
-                        {{ Form::text('nama',null,array('class'=>'input-xxlarge','autofocus','required','autocomplete'=>'off')) }}
+                        <?php echo Form::text('nama',null,array('class'=>'input-xxlarge','autofocus','required','autocomplete'=>'off')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
 
                 <div class="control-group">											
                     <label class="control-label" >Jenis Kelamin</label>
                     <div class="controls">
-                        {{ Form::select('jk',array('L'=>'Laki-laki','P'=>'Perempuan'),null,array('class'=>'input-medium','disabled'=>'disabled')) }}
+                        <?php echo Form::select('jk',array('L'=>'Laki-laki','P'=>'Perempuan'),null,array('class'=>'input-medium','disabled'=>'disabled')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
 
@@ -69,15 +68,15 @@
                 <div class="control-group">											
                     <label class="control-label" >Status Diterima</label>
                     <div class="controls">
-                        {{ Form::select('status',array('P'=>'Pending','Y'=>'Diterima'),'P',array('class'=>'input-medium','required')) }}
+                        <?php echo Form::select('status',array('P'=>'Pending','Y'=>'Diterima'),'P',array('class'=>'input-medium','required')); ?>
                     </div> <!-- /controls -->				
                 </div> <!-- /control-group -->
 
                 <div class="form-actions">
-                    <!--{{ Form::submit('Save', array('class' => 'btn btn-primary')) }}-->
+                    <!--<?php echo Form::submit('Save', array('class' => 'btn btn-primary')); ?>-->
                     <a class="btn btn-primary" id="btn-simpan">Simpan</a>
                     <a class="btn btn-success" id="btn-simpan-cetak">Simpan & Cetak Nota</a>
-                    <a class="btn" href="{{ URL::route('master.calonsiswa.index') }}" >Calon Siswa Terdaftar</a>
+                    <a class="btn" href="<?php echo URL::route('master.calonsiswa.index'); ?>" >Calon Siswa Terdaftar</a>
                 </div> <!-- /form-actions -->
             </fieldset>
             <?php //echo Form::close(); ?>
@@ -92,17 +91,17 @@
 <div id="post-rest"></div>
 <div id="cetak"></div>
 
-<!--<applet id="qz" archive="{{ URL::to('jar/qz-print.jar') }}" name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"> 
-    <param name="jnlp_href" value="{{ URL::to('jar/qz-print_jnlp.jnlp') }}"> 
+<!--<applet id="qz" archive="<?php echo URL::to('jar/qz-print.jar'); ?>" name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"> 
+    <param name="jnlp_href" value="<?php echo URL::to('jar/qz-print_jnlp.jnlp'); ?>"> 
     <param name="cache_option" value="plugin"> 
     <param name="disable_logging" value="false"> 
     <param name="initial_focus" value="false"> 
 </applet>-->
 <br />
 
-@stop
+<?php $__env->stopSection(); ?>
 
-@section('custom-script')
+<?php $__env->startSection('custom-script'); ?>
 <!-- Revisi 16-01-2018 -->
 <!-- <script type="text/javascript" src="qzprint/js/3rdparty/deployJava.js"></script> -->
 <!-- <script type="text/javascript" src="qzprint/js/qz-websocket.js"></script> -->
@@ -485,7 +484,7 @@
 //  *    qz.print();
 //  ***************************************************************************/
 // function printEPL() {
-//     var path = "{{URL::to('/')}}/";
+//     var path = "<?php echo URL::to('/'); ?>/";
 //     if (notReady()) { return; }
 
 //     // Send characters/raw commands to qz using "append"
@@ -1202,12 +1201,12 @@ function chr(i) {
                 if (simpanRegistrasi()) {
                     //embed applet tag
                     //menggunakan qzprint
-                    //var appletTag = '<applet id="qz" archive="{{ URL::to('jar/qz-print.jar') }} " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="{{ URL::to('jar/qz-print_jnlp.jnlp') }}"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
+                    //var appletTag = '<applet id="qz" archive="<?php echo URL::to('jar/qz-print.jar'); ?> " name="QZPrint" code="qz.PrintApplet.class" width="50" height="50"><param name="jnlp_href" value="<?php echo URL::to('jar/qz-print_jnlp.jnlp'); ?>"><param name="cache_option" value="plugin"><param name="disable_logging" value="false"><param name="initial_focus" value="false"></applet>';
                     //menggunakan jzebra
-//                    var appletTag = '<applet name="QZPrint" code="jzebra.PrintApplet.class" archive="{{ URL::to('jar/jzebra.jar') }}" width="1px" height="1px">'
+//                    var appletTag = '<applet name="QZPrint" code="jzebra.PrintApplet.class" archive="<?php echo URL::to('jar/jzebra.jar'); ?>" width="1px" height="1px">'
 //                    jQuery('body').after(appletTag);
                     //--cetak nota---       
-                    var getNotaUrl = "{{ URL::to('transaksi/registrasi/getnota') }}";
+                    var getNotaUrl = "<?php echo URL::to('transaksi/registrasi/getnota'); ?>";
                     //alert(getNotaUrl);
                     var notaText;
                     $.ajax({
@@ -1223,11 +1222,11 @@ function chr(i) {
                             // disable semua
                             // 
 //                             //alert(notaText);
-// //                            QZPrint.findPrinter("{{ $appset->printeraddr }}");
+// //                            QZPrint.findPrinter("<?php echo $appset->printeraddr; ?>");
 // //                            QZPrint.append(notaText);
 // //                            QZPrint.print();
 
-//                             var printer = "{{ $appset->printeraddr }}";
+//                             var printer = "<?php echo $appset->printeraddr; ?>";
 // //                            //Printing
 //                             qz.findPrinter(printer);
 //                             // Automatically gets called when "qz.findPrinter()" is finished.
@@ -1281,7 +1280,7 @@ function chr(i) {
         var dataReg;
         var dataBayar = [];
         function simpanRegistrasi() {
-            var simpanUrl = "{{ URL::to('transaksi/registrasi/simpan') }}";
+            var simpanUrl = "<?php echo URL::to('transaksi/registrasi/simpan'); ?>";
             dataReg = {
                 "tapeldaftar_id": jQuery('input[name=tapelaktif]').val(),
                 "tapelmasuk_id": jQuery('select[name=tapel]').val(),
@@ -1351,7 +1350,7 @@ function chr(i) {
             var tapelid = jQuery('select[name=tapel]').attr('value');
             var gelombang = jQuery('select[name=gelombang]').val();
             var jk = jQuery('select[name=jk]').val();
-            var getPembayaranUrl = "{{ URL::to('transaksi/registrasi/getbiaya') }}" + "/" + tapelid + "/" + gelombang + "/" + jk;
+            var getPembayaranUrl = "<?php echo URL::to('transaksi/registrasi/getbiaya'); ?>" + "/" + tapelid + "/" + gelombang + "/" + jk;
             jQuery('.table-pembayaran').load(getPembayaranUrl, null, function() {
                 //sembunyikan input dibayar
                 jQuery('.dibayar').attr('hidden', 'hidden');
@@ -1363,13 +1362,13 @@ function chr(i) {
         jQuery('select[name=tapel]').change(function() {
             var tapelid = jQuery(this).attr('value');
             //generate select gelombang
-            var getSelectGelUrl = "{{ URL::to('transaksi/registrasi/getgelombang') }}" + "/" + tapelid;
+            var getSelectGelUrl = "<?php echo URL::to('transaksi/registrasi/getgelombang'); ?>" + "/" + tapelid;
             jQuery('.select-gelombang').load(getSelectGelUrl, null, function(data) {
                 //set to not selected
                 jQuery('select[name=gelombang]').val([]);
             });
             //generate regid            
-            var getRegidUrl = "{{ URL::to('transaksi/registrasi/getregid') }}" + "/" + tapelid;
+            var getRegidUrl = "<?php echo URL::to('transaksi/registrasi/getregid'); ?>" + "/" + tapelid;
             var regid;
             jQuery.get(getRegidUrl, null, function(data) {
                 regid = data;
@@ -1463,4 +1462,6 @@ function chr(i) {
 
 
 </script>
-@stop
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('_layouts.default', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
